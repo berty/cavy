@@ -12,7 +12,7 @@ class ComponentNotFoundError extends Error {
 
 export default class TestScope {
 
-  constructor(component, waitTime, startDelay, shouldSendReport) {
+  constructor(component, waitTime, startDelay, shouldSendReport, reportServerHost, reportServerPort) {
     this.component = component;
     this.testHooks = component.testHookStore;
 
@@ -21,6 +21,8 @@ export default class TestScope {
     this.waitTime = waitTime;
     this.startDelay = startDelay;
     this.shouldSendReport = shouldSendReport;
+    this.reportServerHost = reportServerHost;
+    this.reportServerPort = reportServerPort;
 
     this.run.bind(this);
   }
@@ -49,12 +51,12 @@ export default class TestScope {
       let {description, f} = this.testCases[i];
       try {
         await f.call(this);
-        let successMsg = `${description}  ✅`;
+        let successMsg = `${description} succeeded`;
 
         console.log(successMsg);
         testResults.push({message: successMsg, passed: true});
       } catch (e) {
-        let errorMsg = `${description}  ❌\n   ${e.message}`;
+        let errorMsg = `${description} failed\n   ${e.message}`;
 
         console.warn(errorMsg);
         testResults.push({message: errorMsg, passed: false});
@@ -80,7 +82,7 @@ export default class TestScope {
   };
 
   sendReport(report) {
-    const url = 'http://127.0.0.1:8082/report';
+    const url = `http://${this.reportServerHost}:${this.reportServerPort}/report`;
     const options = {
       method: 'POST',
       body: JSON.stringify(report),

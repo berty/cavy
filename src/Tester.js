@@ -70,7 +70,7 @@ export default class Tester extends Component {
 
   async runTests() {
     const scope = new TestScope(this, this.props.waitTime, this.props.startDelay,
-      this.props.sendReport);
+      this.props.sendReport, this.props.reportServerHost, this.props.reportServerPort);
     for (var i = 0; i < this.props.specs.length; i++) {
       await this.props.specs[i](scope);
     }
@@ -107,7 +107,9 @@ Tester.propTypes = {
   waitTime: PropTypes.number,
   startDelay: PropTypes.number,
   clearAsyncStorage: PropTypes.bool,
-  sendReport: PropTypes.bool
+  sendReport: PropTypes.bool,
+  reportServerHost: PropTypes.string,
+  reportServerPort: PropTypes.number
 };
 
 Tester.childContextTypes = {
@@ -118,5 +120,7 @@ Tester.defaultProps = {
   waitTime: 2000,
   startDelay: 0,
   clearAsyncStorage: false,
-  sendReport: false
+  sendReport: false,
+  reportServerHost: '127.0.0.1',
+  reportServerPort: 8082
 };
